@@ -78,8 +78,11 @@ public class UserController {
         logger.info("方法名称 : UserController-Login---> 方法用时 : " + execTimeMillis+" ms");
         //验证该用户是否存在
         if (user != null) {
+            logger.info("记录user的值： " + user);
             //判断密码是否相等
-            boolean flag=DigestUtils.md5DigestAsHex(password.getBytes("UTF-8")).equals(user.getPassword());
+            String password1 = user.getPassword();
+            String passwordMd5 =DigestUtils.md5DigestAsHex(password.getBytes("UTF-8"));
+            boolean flag=passwordMd5.equals(password1);
 
             if (flag) {
                 //生成token
@@ -91,6 +94,7 @@ public class UserController {
                 return "login";
             }
         } else {
+            logger.info("记录user的值： " + user);
             model.addAttribute("msg", "用户名或者密码错误");
             return "login";
         }
@@ -106,8 +110,8 @@ public class UserController {
     /**
      * 手机注册接口
      *
-     * @param
-     * @param
+     * @param request
+     * @param model
      * @return
      */
     @RequestMapping(value = "/phone/regist", method = RequestMethod.POST)
@@ -162,7 +166,7 @@ public class UserController {
     @RequestMapping(value = "/phone/code", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> sentPhoneCode(@RequestParam("phone") String phone) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(100);
         //验证手机号码格式
         String phoneRegex = "^((\\+86)|(86))?1[3|4|5|7|8][0-9]\\d{4,8}$";
         Pattern p = Pattern.compile(phoneRegex);
@@ -238,7 +242,7 @@ public class UserController {
     @RequestMapping(value = "/mail/code", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> sentMailCode(@RequestParam(value = "mail", required = false) String mail) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(100);
         //验证邮箱
         String mailRegex = "^\\s*\\w+(?:\\.{0,1}[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$";
         Pattern p1 = Pattern.compile(mailRegex);
